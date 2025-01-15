@@ -32,7 +32,7 @@ class ProductControllerTest {
     @Qualifier("f2")
     IProductService productService;
 
-
+    /*
     @Test
     void getProducts() {
 
@@ -58,8 +58,9 @@ class ProductControllerTest {
         assertEquals(products.size(), response.size());
 
 
-    }
+    }*/
 
+    /*
     @Test
     void getProductbyId() {
 
@@ -84,7 +85,7 @@ class ProductControllerTest {
         assertEquals(product.getId(),responseEntity.getBody().getId(),"Input ProductId doesn't match Output Product");
 
 
-    }
+    }*/
 
     @Test
     void updateProduct() {

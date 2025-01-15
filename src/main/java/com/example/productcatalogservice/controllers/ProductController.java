@@ -1,7 +1,9 @@
 package com.example.productcatalogservice.controllers;
 
+import com.example.productcatalogservice.commons.AuthenticationCommon;
 import com.example.productcatalogservice.dto.CategoryDto;
 import com.example.productcatalogservice.dto.ProductDto;
+import com.example.productcatalogservice.dto.UserDto;
 import com.example.productcatalogservice.models.Category;
 import com.example.productcatalogservice.models.Product;
 import com.example.productcatalogservice.service.IProductService;
@@ -29,9 +31,27 @@ public class ProductController {
     @Qualifier("f2")
     private IProductService productService2;
 
-    @GetMapping("/getProducts")
-    public ResponseEntity<List<ProductDto>> getProducts() {
+    @Autowired
+    private AuthenticationCommon authenticationCommon;
+
+    @GetMapping("/getProducts/all/{token}")
+    public ResponseEntity<List<ProductDto>> getProducts(@PathVariable("token") String token) {
+        System.out.println("getProducts all called");
+        System.out.println("token: " + token);
         MultiValueMap<String, String> headers= new LinkedMultiValueMap<>();
+        // validate token first
+        try {
+            UserDto userDto=authenticationCommon.validateToken(token);
+            if(userDto==null){
+                headers.add("error", "Invalid token");
+                return new ResponseEntity<>(null,headers,HttpStatus.UNAUTHORIZED);
+            }
+            System.out.println("valid user :"+userDto.getEmail());
+        } catch (Exception e) {
+            headers.add("error", "Something went wrong");
+            return new  ResponseEntity<>(null,headers,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        //get product list
         List<ProductDto> productDtos = new ArrayList<>();
         List<Product> products = productService2.getAllProducts();
         if (products == null) {
@@ -45,10 +65,28 @@ public class ProductController {
         return new ResponseEntity<>(productDtos, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/getProducts/{id}")
-    public ResponseEntity<ProductDto> getProductbyId(@PathVariable Long id) {
+    @GetMapping("/getProducts/{id}/{token}")
+    public ResponseEntity<ProductDto> getProductbyId(@PathVariable Long id, @PathVariable String token) {
+
+        System.out.println("token: " + token);
+
 
         MultiValueMap<String, String> headers= new LinkedMultiValueMap<>();
+
+        // validate token first
+        try {
+            UserDto userDto=authenticationCommon.validateToken(token);
+            if(userDto==null){
+                headers.add("error", "Invalid token");
+                return new ResponseEntity<>(null,headers,HttpStatus.UNAUTHORIZED);
+            }
+            System.out.println("valid user :"+userDto.getEmail());
+        } catch (Exception e) {
+            headers.add("error", "Something went wrong");
+            return new  ResponseEntity<>(null,headers,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // get product details
         if(id<0){
             headers.add("status", "Product id cannot be negative");
             return new ResponseEntity<>(null,headers,HttpStatus.BAD_REQUEST);

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/catalog")
 public class ProductController {
 
     @Autowired
@@ -34,12 +34,15 @@ public class ProductController {
     @Autowired
     private AuthenticationCommon authenticationCommon;
 
-    @GetMapping("/getProducts/all/{token}")
+    @GetMapping("/products/all/{token}")
     public ResponseEntity<List<ProductDto>> getProducts(@PathVariable("token") String token) {
         System.out.println("getProducts all called");
         System.out.println("token: " + token);
+
         MultiValueMap<String, String> headers= new LinkedMultiValueMap<>();
         // validate token first
+        System.out.println("Not validating token for now..");
+        /*
         try {
             UserDto userDto=authenticationCommon.validateToken(token);
             if(userDto==null){
@@ -51,6 +54,8 @@ public class ProductController {
             headers.add("error", "Something went wrong");
             return new  ResponseEntity<>(null,headers,HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+         */
         //get product list
         List<ProductDto> productDtos = new ArrayList<>();
         List<Product> products = productService2.getAllProducts();
@@ -65,7 +70,7 @@ public class ProductController {
         return new ResponseEntity<>(productDtos, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/getProducts/{id}/{token}")
+    @GetMapping("/products/{id}/{token}")
     public ResponseEntity<ProductDto> getProductbyId(@PathVariable Long id, @PathVariable String token) {
 
         System.out.println("token: " + token);
@@ -74,6 +79,8 @@ public class ProductController {
         MultiValueMap<String, String> headers= new LinkedMultiValueMap<>();
 
         // validate token first
+        System.out.println("Not validating token for now..");
+        /*
         try {
             UserDto userDto=authenticationCommon.validateToken(token);
             if(userDto==null){
@@ -85,12 +92,18 @@ public class ProductController {
             headers.add("error", "Something went wrong");
             return new  ResponseEntity<>(null,headers,HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        */
 
         // get product details
         if(id<0){
             headers.add("status", "Product id cannot be negative");
             return new ResponseEntity<>(null,headers,HttpStatus.BAD_REQUEST);
         }
+
+
+
+
+
         Product product=productService2.getProductById(id);
         System.out.println("product="+product);
         if(product==null){
@@ -102,7 +115,7 @@ public class ProductController {
     }
 
 
-    @PostMapping("/updateProducts/{product_id}")
+    @PutMapping("/products/{product_id}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable Long product_id,@RequestBody  ProductDto productDto) {
         MultiValueMap<String, String> headers= new LinkedMultiValueMap<>();
 
@@ -116,7 +129,7 @@ public class ProductController {
         return new ResponseEntity<>(from(product),headers, HttpStatus.CREATED);
     }
 
-    @PostMapping("/createProduct")
+    @PostMapping("/product")
     public ProductDto createProduct(@RequestBody ProductDto productDto) {
         Product input = from(productDto);
         Product output = productService2.save(input);

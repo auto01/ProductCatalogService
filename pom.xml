@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>ProductCatalogService</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-TEST</version>
     <name>ProductCatalogService</name>
     <description>ProductCatalogService</description>
     <url/>
@@ -67,6 +67,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
